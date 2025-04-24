@@ -11,11 +11,13 @@ LABELS_PER_ROW = 7
 LABELS_PER_COLUMN = 27
 LABEL_WIDTH = 25.4 * mm
 LABEL_HEIGHT = 10 * mm
-HORIZONTAL_GAP = 1 * mm  # Gap of 1mm between labels
+HORIZONTAL_GAP = 3 * mm  # Gap of 1mm between labels
 VERTICAL_GAP = 0 * mm
-LEFT_MARGIN = (A4[0] - (LABELS_PER_ROW * LABEL_WIDTH)) / 2  # Center labels horizontally
+LEFT_MARGIN = (
+    A4[0] - (LABELS_PER_ROW * LABEL_WIDTH + LABELS_PER_ROW * HORIZONTAL_GAP)
+) / 2  # Center labels horizontally
 TOP_MARGIN = (
-    A4[1] - (LABELS_PER_COLUMN * LABEL_HEIGHT)
+    A4[1] - (LABELS_PER_COLUMN * LABEL_HEIGHT + LABELS_PER_COLUMN * VERTICAL_GAP)
 ) / 2  # Center labels vertically
 
 
