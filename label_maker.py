@@ -5,16 +5,17 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 import os
+import subprocess
 
 # AVERY L4731REV-25 specifications
 LABELS_PER_ROW = 7
 LABELS_PER_COLUMN = 27
 LABEL_WIDTH = 25.4 * mm
 LABEL_HEIGHT = 10 * mm
-HORIZONTAL_GAP = 3 * mm  # Gap of 1mm between labels
+HORIZONTAL_GAP = 2.5 * mm  # Gap of 1mm between labels
 VERTICAL_GAP = 0 * mm
 LEFT_MARGIN = (
-    A4[0] - (LABELS_PER_ROW * LABEL_WIDTH + LABELS_PER_ROW * HORIZONTAL_GAP)
+    A4[0] - (LABELS_PER_ROW * LABEL_WIDTH + (LABELS_PER_ROW - 1) * HORIZONTAL_GAP)
 ) / 2  # Center labels horizontally
 TOP_MARGIN = (
     A4[1] - (LABELS_PER_COLUMN * LABEL_HEIGHT + LABELS_PER_COLUMN * VERTICAL_GAP)
@@ -32,14 +33,14 @@ def create_qr_code(text, size):
     qr.add_data(text)
     qr.make(fit=True)
     img = qr.make_image(fill_color="black", back_color="white")
+    # Resize the image to the specified size
+    # img = img.resize((int(size), int(size)))
     return img
 
 
 def generate_labels(output_file, start_number, count):
     """Generate a PDF with labels containing QR codes and text."""
     c = canvas.Canvas(output_file, pagesize=A4)
-
-    current_number = start_number  # Initialize with start number
 
     for label_num in range(count):
         # Calculate position for current label
@@ -56,8 +57,8 @@ def generate_labels(output_file, start_number, count):
         qr_size = LABEL_HEIGHT - 2 * mm  # 1mm margin on top and bottom
         qr_img = create_qr_code(asn_number, qr_size)
 
-        # Save QR code temporarily
-        qr_path = "temp_qr.png"
+        # Save QR code temporarily with unique filename
+        qr_path = f"temp_qr_{label_num}.png"
         qr_img.save(qr_path)
 
         # Draw QR code (left side)
@@ -84,6 +85,17 @@ def generate_labels(output_file, start_number, count):
     c.save()
 
 
+def print_pdf_headless(pdf_path, printer_name=None):
+    command = ["lp", "-o", "fit-to-page=false", "-o", "scaling=100"]
+
+    if printer_name:
+        command += ["-d", printer_name]
+
+    command.append(pdf_path)
+
+    subprocess.run(command, check=True)
+
+
 def main():
     import argparse
 
@@ -98,11 +110,16 @@ def main():
     parser.add_argument(
         "--output", type=str, default="labels.pdf", help="Output PDF filename"
     )
+    parser.add_argument("--print", action="store_true", help="Print labels")
 
     args = parser.parse_args()
 
     generate_labels(args.output, args.start, args.count)
     print(f"Generated {args.count} labels in {args.output}")
+
+    if args.print:
+        print_pdf_headless(args.output)
+        os.remove(args.output)
 
 
 if __name__ == "__main__":
