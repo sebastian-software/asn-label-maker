@@ -7,6 +7,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase.pdfmetrics import getAscentDescent
 import re
 import subprocess
 import tempfile
@@ -67,10 +68,13 @@ def generate_labels(output_file, start_number, count, verbose=False):
         qr_y = y + (LABEL_HEIGHT - qr_size) / 2  # Center QR vertically
         c.drawImage(ImageReader(buf), x, qr_y, qr_size, qr_size)
 
-        # Draw text (right side)
+        # Draw text (right side, vertically centered)
+        font_name = "Helvetica-Bold"
+        font_size = 8
         text_x = x + qr_size
-        text_y = y + LABEL_HEIGHT / 2 - 2  # Adjust for font baseline
-        c.setFont("Helvetica-Bold", 8)
+        ascent, descent = getAscentDescent(font_name, font_size)
+        text_y = y + (LABEL_HEIGHT - ascent + descent) / 2
+        c.setFont(font_name, font_size)
         c.drawString(text_x, text_y, asn_number)
 
         if verbose:
