@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import re
 import subprocess
 import tempfile
@@ -124,14 +125,16 @@ def main():
     args = parser.parse_args()
 
     if args.print:
-        # Use a temp file when printing to avoid race condition:
-        # lp is asynchronous — the spooler may not have read the file
-        # before os.remove() deletes it. A temp file lets the OS handle cleanup.
         with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
             output_path = tmp.name
-        generate_labels(output_path, args.start, args.count, verbose=args.verbose)
-        print(f"Generated {args.count} labels, sending to printer...")
-        print_pdf_headless(output_path)
+        try:
+            generate_labels(output_path, args.start, args.count, verbose=args.verbose)
+            print(f"Generated {args.count} labels, sending to printer...")
+            # CUPS copies the file into the spool directory before lp returns,
+            # so it is safe to delete immediately after.
+            print_pdf_headless(output_path)
+        finally:
+            os.remove(output_path)
     else:
         generate_labels(args.output, args.start, args.count, verbose=args.verbose)
         print(f"Generated {args.count} labels in {args.output}")
