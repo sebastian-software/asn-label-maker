@@ -39,7 +39,7 @@ def create_qr_code(text):
     return qr.make_image(fill_color="black", back_color="white")
 
 
-def generate_labels(output_file, start_number, count):
+def generate_labels(output_file, start_number, count, verbose=False):
     """Generate a PDF with labels containing QR codes and text."""
     c = canvas.Canvas(output_file, pagesize=A4)
 
@@ -73,7 +73,8 @@ def generate_labels(output_file, start_number, count):
         c.setFont("Helvetica-Bold", 8)
         c.drawString(text_x, text_y, asn_number)
 
-        print(asn_number + "(" + str(row) + " / " + str(col) + ")\n")
+        if verbose:
+            print(f"{asn_number}({row} / {col})")
 
         # Create new page if needed
         if (label_num + 1) % (LABELS_PER_ROW * LABELS_PER_COLUMN) == 0 and (
@@ -112,6 +113,7 @@ def main():
         "--output", type=str, default="labels.pdf", help="Output PDF filename"
     )
     parser.add_argument("--print", action="store_true", help="Print labels")
+    parser.add_argument("--verbose", action="store_true", help="Print debug output for each label")
 
     args = parser.parse_args()
 
@@ -121,11 +123,11 @@ def main():
         # before os.remove() deletes it. A temp file lets the OS handle cleanup.
         with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
             output_path = tmp.name
-        generate_labels(output_path, args.start, args.count)
+        generate_labels(output_path, args.start, args.count, verbose=args.verbose)
         print(f"Generated {args.count} labels, sending to printer...")
         print_pdf_headless(output_path)
     else:
-        generate_labels(args.output, args.start, args.count)
+        generate_labels(args.output, args.start, args.count, verbose=args.verbose)
         print(f"Generated {args.count} labels in {args.output}")
 
 

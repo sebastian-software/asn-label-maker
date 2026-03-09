@@ -55,6 +55,7 @@ python3 label_maker.py [OPTIONS]
 | `--count` | Integer | `189` | Number of labels to generate |
 | `--output` | String | `labels.pdf` | Output PDF filename |
 | `--print` | Flag | off | Print PDF directly after generation |
+| `--verbose` | Flag | off | Print debug output for each label |
 
 ### Examples
 
