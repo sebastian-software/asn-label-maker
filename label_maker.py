@@ -24,7 +24,7 @@ LEFT_MARGIN = (
     A4[0] - (LABELS_PER_ROW * LABEL_WIDTH + (LABELS_PER_ROW - 1) * HORIZONTAL_GAP)
 ) / 2  # Center labels horizontally
 TOP_MARGIN = (
-    A4[1] - (LABELS_PER_COLUMN * LABEL_HEIGHT + LABELS_PER_COLUMN * VERTICAL_GAP)
+    A4[1] - (LABELS_PER_COLUMN * LABEL_HEIGHT + (LABELS_PER_COLUMN - 1) * VERTICAL_GAP)
 ) / 2  # Center labels vertically
 
 
