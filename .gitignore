@@ -1,2 +1,4 @@
 labels.pdf
 .DS_Store
+venv/
+.mypy_cache/
