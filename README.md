@@ -37,7 +37,6 @@ pip install -r requirements.txt
 |---|---|---|
 | reportlab | 4.4.0 | PDF generation |
 | qrcode[pil] | 8.1 | QR code generation |
-| python-barcode | 0.15.1 | Barcode support |
 | types-qrcode | 8.1.x | Type stubs for development |
 | types-reportlab | 4.3.x | Type stubs for development |
 
