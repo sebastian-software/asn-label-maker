@@ -1,139 +1,138 @@
 # ASN Label Maker
 
-CLI-Tool zur Generierung von PDF-Etiketten mit fortlaufenden ASN-Nummern (Archive Serial Number) und QR-Codes. Die Labels sind fuer das Etikettenformat **AVERY L4731REV-25** optimiert und werden im A4-Format ausgegeben.
+CLI tool for generating PDF labels with sequential ASN numbers (Archive Serial Number) and QR codes. The labels are optimized for the **AVERY L4731REV-25** label format and output in A4 format.
 
-## Was macht das Tool?
+## What does the tool do?
 
-Das Tool erzeugt druckfertige PDF-Dateien mit Etiketten im Format 25,4 x 10 mm. Jedes Etikett enthaelt:
+The tool generates print-ready PDF files with labels in the 25.4 x 10 mm format. Each label contains:
 
-- **Links:** Einen QR-Code, der die ASN-Nummer kodiert
-- **Rechts:** Die ASN-Nummer als Text (z.B. `ASN000001`)
+- **Left:** A QR code encoding the ASN number
+- **Right:** The ASN number as text (e.g. `ASN000001`)
 
-Pro A4-Seite werden bis zu **189 Labels** (7 Spalten x 27 Reihen) erzeugt. Bei mehr als 189 Labels werden automatisch weitere Seiten angelegt.
+Up to **189 labels** (7 columns x 27 rows) are generated per A4 page. If more than 189 labels are needed, additional pages are created automatically.
 
-## Voraussetzungen
+## Prerequisites
 
 - Python 3
-- macOS, Linux oder ein anderes UNIX-System (fuer die Druckfunktion via `lp`)
+- macOS, Linux, or another UNIX system (for printing via `lp`)
 
 ## Installation
 
 ```bash
-# Repository klonen
+# Clone the repository
 git clone <repository-url>
 cd ASN-label-maker
 
-# Virtual Environment erstellen und aktivieren
+# Create and activate a virtual environment
 python3 -m venv venv
 source venv/bin/activate
 
-# Abhaengigkeiten installieren
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### Abhaengigkeiten
+### Dependencies
 
-| Paket | Version | Zweck |
+| Package | Version | Purpose |
 |---|---|---|
-| reportlab | 4.4.0 | PDF-Generierung |
-| qrcode[pil] | 8.1 | QR-Code-Erzeugung |
-| python-barcode | 0.15.1 | Barcode-Unterstuetzung |
-| types-qrcode | 8.1.x | Type-Stubs fuer Entwicklung |
-| types-reportlab | 4.3.x | Type-Stubs fuer Entwicklung |
+| reportlab | 4.4.0 | PDF generation |
+| qrcode[pil] | 8.1 | QR code generation |
+| python-barcode | 0.15.1 | Barcode support |
+| types-qrcode | 8.1.x | Type stubs for development |
+| types-reportlab | 4.3.x | Type stubs for development |
 
-## Nutzung
+## Usage
 
 ```bash
-python3 label_maker.py [OPTIONEN]
+python3 label_maker.py [OPTIONS]
 ```
 
-### Optionen
+### Options
 
-| Option | Typ | Standard | Beschreibung |
+| Option | Type | Default | Description |
 |---|---|---|---|
-| `--start` | Ganzzahl | `1` | Startnummer fuer die ASN-Nummerierung |
-| `--count` | Ganzzahl | `189` | Anzahl der zu generierenden Labels |
-| `--output` | Text | `labels.pdf` | Dateiname der Ausgabe-PDF |
-| `--print` | Flag | aus | PDF nach Generierung direkt drucken |
+| `--start` | Integer | `1` | Start number for ASN numbering |
+| `--count` | Integer | `189` | Number of labels to generate |
+| `--output` | String | `labels.pdf` | Output PDF filename |
+| `--print` | Flag | off | Print PDF directly after generation |
 
-### Beispiele
+### Examples
 
-**Eine volle Seite mit 189 Labels generieren (Standard):**
+**Generate a full page with 189 labels (default):**
 
 ```bash
 python3 label_maker.py
 ```
 
-Erzeugt `labels.pdf` mit Labels von `ASN000001` bis `ASN000189`.
+Generates `labels.pdf` with labels from `ASN000001` to `ASN000189`.
 
-**50 Labels ab einer bestimmten Nummer:**
-
-```bash
-python3 label_maker.py --start 100 --count 50 --output charge-100.pdf
-```
-
-Erzeugt `charge-100.pdf` mit Labels von `ASN000100` bis `ASN000149`.
-
-**Mehrere Seiten generieren:**
+**50 labels starting from a specific number:**
 
 ```bash
-python3 label_maker.py --count 400 --output grossauftrag.pdf
+python3 label_maker.py --start 100 --count 50 --output batch-100.pdf
 ```
 
-Erzeugt eine PDF mit 3 Seiten (189 + 189 + 22 Labels).
+Generates `batch-100.pdf` with labels from `ASN000100` to `ASN000149`.
 
-**Generieren und sofort drucken:**
+**Generate multiple pages:**
+
+```bash
+python3 label_maker.py --count 400 --output large-batch.pdf
+```
+
+Generates a PDF with 3 pages (189 + 189 + 22 labels).
+
+**Generate and print immediately:**
 
 ```bash
 python3 label_maker.py --start 200 --count 189 --print
 ```
 
-Erzeugt die Labels, druckt sie ueber den Standard-Drucker und loescht die PDF-Datei anschliessend automatisch.
+Generates the labels, prints them via the default printer, and automatically deletes the PDF file afterwards.
 
-## Label-Spezifikationen
+## Label Specifications
 
-Das Tool ist auf das Etikettenformat **AVERY L4731REV-25** abgestimmt:
+The tool is configured for the **AVERY L4731REV-25** label format:
 
-| Eigenschaft | Wert |
+| Property | Value |
 |---|---|
-| Etikettengroesse | 25,4 x 10 mm |
-| Etiketten pro Reihe | 7 |
-| Reihen pro Seite | 27 |
-| Etiketten pro Seite | 189 |
-| Horizontaler Abstand | 2,5 mm |
-| Vertikaler Abstand | 0 mm |
-| Seitenformat | A4 |
-| Zentrierung | horizontal und vertikal auf der Seite |
+| Label size | 25.4 x 10 mm |
+| Labels per row | 7 |
+| Rows per page | 27 |
+| Labels per page | 189 |
+| Horizontal gap | 2.5 mm |
+| Vertical gap | 0 mm |
+| Page format | A4 |
+| Alignment | Centered horizontally and vertically on the page |
 
-### QR-Code
+### QR Code
 
-- Groesse: 8 x 8 mm (Etikettenhoehe minus je 1 mm Rand oben und unten)
-- Inhalt: Die jeweilige ASN-Nummer (z.B. `ASN000001`)
-- Fehlerkorrektur: Low (Level L)
-- Position: linke Seite des Etiketts, vertikal zentriert
+- Size: 8 x 8 mm (label height minus 1 mm margin top and bottom)
+- Content: The respective ASN number (e.g. `ASN000001`)
+- Error correction: Low (Level L)
+- Position: Left side of the label, vertically centered
 
 ### Text
 
-- Schriftart: Helvetica Bold, 8pt
-- Format: `ASN` gefolgt von einer 6-stelligen Nummer mit fuehrenden Nullen
-- Position: rechts neben dem QR-Code, vertikal zentriert
+- Font: Helvetica Bold, 8pt
+- Format: `ASN` followed by a 6-digit number with leading zeros
+- Position: Right of the QR code, vertically centered
 
-## Druckhinweise
+## Printing Notes
 
-Beim Drucken mit `--print` wird der `lp`-Befehl mit folgenden Einstellungen verwendet:
+When printing with `--print`, the `lp` command is used with the following settings:
 
-- **Skalierung:** 100% (keine Anpassung an Seitengroesse)
-- **Fit-to-Page:** deaktiviert
+- **Scaling:** 100% (no fit-to-page adjustment)
+- **Fit-to-Page:** disabled
 
-Stelle sicher, dass der Drucker korrekt konfiguriert ist und A4-Papier mit den AVERY-Etiketten eingelegt ist. Nach dem Drucken wird die PDF-Datei automatisch geloescht.
+Make sure the printer is correctly configured and A4 paper with the AVERY labels is loaded. After printing, the PDF file is automatically deleted.
 
-## Projektstruktur
+## Project Structure
 
 ```
 ASN-label-maker/
-├── label_maker.py       # Hauptanwendung
-├── requirements.txt     # Python-Abhaengigkeiten
-├── description.md       # Urspruengliche Anforderungsbeschreibung
-├── .gitignore           # Git-Konfiguration
-└── README.md            # Diese Datei
+├── label_maker.py       # Main application
+├── requirements.txt     # Python dependencies
+├── .gitignore           # Git configuration
+└── README.md            # This file
 ```
