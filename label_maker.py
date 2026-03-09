@@ -5,6 +5,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 import os
+import re
 import subprocess
 import tempfile
 
@@ -93,6 +94,8 @@ def print_pdf_headless(pdf_path, printer_name=None):
     command = ["lp", "-o", "fit-to-page=false", "-o", "scaling=100"]
 
     if printer_name:
+        if not re.match(r'^[\w.\-]+$', printer_name):
+            raise ValueError(f"Invalid printer name: {printer_name!r}")
         command += ["-d", printer_name]
 
     command.append(pdf_path)
