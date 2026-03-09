@@ -73,6 +73,7 @@ def generate_labels(output_file, start_number, count, verbose=False):
         # Draw QR code (left side)
         qr_y = y + (LABEL_HEIGHT - qr_size) / 2  # Center QR vertically
         c.drawImage(ImageReader(buf), x, qr_y, qr_size, qr_size)
+        buf.close()
 
         # Draw text (right side, vertically centered)
         text_x = x + qr_size
