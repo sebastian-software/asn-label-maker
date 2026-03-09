@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+from io import BytesIO
+
 import qrcode
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
-import os
+from reportlab.lib.utils import ImageReader
 import re
 import subprocess
 import tempfile
@@ -59,27 +61,22 @@ def generate_labels(output_file, start_number, count):
         qr_size = LABEL_HEIGHT - 2 * mm  # 1mm margin on top and bottom
         qr_img = create_qr_code(asn_number, qr_size)
 
-        # Save QR code temporarily in OS temp directory
-        tmp_file = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
-        qr_path = tmp_file.name
-        tmp_file.close()
-        try:
-            qr_img.save(qr_path)
+        # Render QR code to in-memory buffer (no disk I/O)
+        buf = BytesIO()
+        qr_img.save(buf, format='PNG')
+        buf.seek(0)
 
-            # Draw QR code (left side)
-            qr_y = y + (LABEL_HEIGHT - qr_size) / 2  # Center QR vertically
-            c.drawImage(qr_path, x, qr_y, qr_size, qr_size)
+        # Draw QR code (left side)
+        qr_y = y + (LABEL_HEIGHT - qr_size) / 2  # Center QR vertically
+        c.drawImage(ImageReader(buf), x, qr_y, qr_size, qr_size)
 
-            # Draw text (right side)
-            text_x = x + qr_size + 0 * mm
-            text_y = y + LABEL_HEIGHT / 2 - 2  # Adjust for font baseline
-            c.setFont("Helvetica-Bold", 8)
-            c.drawString(text_x, text_y, asn_number)
+        # Draw text (right side)
+        text_x = x + qr_size + 0 * mm
+        text_y = y + LABEL_HEIGHT / 2 - 2  # Adjust for font baseline
+        c.setFont("Helvetica-Bold", 8)
+        c.drawString(text_x, text_y, asn_number)
 
-            print(asn_number + "(" + str(row) + " / " + str(col) + ")\n")
-        finally:
-            # Remove temporary QR code file
-            os.remove(qr_path)
+        print(asn_number + "(" + str(row) + " / " + str(col) + ")\n")
 
         # Create new page if needed
         if (label_num + 1) % (LABELS_PER_ROW * LABELS_PER_COLUMN) == 0 and (
