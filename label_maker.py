@@ -16,17 +16,17 @@ from reportlab.pdfbase.pdfmetrics import getAscentDescent
 from reportlab.pdfgen import canvas
 
 # AVERY L4731REV-25 specifications
-LABELS_PER_ROW = 7
-LABELS_PER_COLUMN = 27
+COLS_PER_PAGE = 7
+ROWS_PER_PAGE = 27
 LABEL_WIDTH = 25.4 * mm
 LABEL_HEIGHT = 10 * mm
 HORIZONTAL_GAP = 2.5 * mm  # Gap of 2.5mm between labels
 VERTICAL_GAP = 0 * mm
 LEFT_MARGIN = (
-    A4[0] - (LABELS_PER_ROW * LABEL_WIDTH + (LABELS_PER_ROW - 1) * HORIZONTAL_GAP)
+    A4[0] - (COLS_PER_PAGE * LABEL_WIDTH + (COLS_PER_PAGE - 1) * HORIZONTAL_GAP)
 ) / 2  # Center labels horizontally
 TOP_MARGIN = (
-    A4[1] - (LABELS_PER_COLUMN * LABEL_HEIGHT + (LABELS_PER_COLUMN - 1) * VERTICAL_GAP)
+    A4[1] - (ROWS_PER_PAGE * LABEL_HEIGHT + (ROWS_PER_PAGE - 1) * VERTICAL_GAP)
 ) / 2  # Center labels vertically
 
 
@@ -55,8 +55,8 @@ def generate_labels(output_file: str, start_number: int, count: int, verbose: bo
 
     for label_num in range(count):
         # Calculate position for current label
-        row = (label_num // LABELS_PER_ROW) % LABELS_PER_COLUMN
-        col = label_num % LABELS_PER_ROW
+        row = (label_num // COLS_PER_PAGE) % ROWS_PER_PAGE
+        col = label_num % COLS_PER_PAGE
 
         x = LEFT_MARGIN + col * (LABEL_WIDTH + HORIZONTAL_GAP)
         y = A4[1] - TOP_MARGIN - (row + 1) * LABEL_HEIGHT
@@ -86,7 +86,7 @@ def generate_labels(output_file: str, start_number: int, count: int, verbose: bo
             print(f"{asn_number}({row} / {col})")
 
         # Create new page if needed
-        if (label_num + 1) % (LABELS_PER_ROW * LABELS_PER_COLUMN) == 0 and (
+        if (label_num + 1) % (COLS_PER_PAGE * ROWS_PER_PAGE) == 0 and (
             label_num + 1
         ) < count:
             c.showPage()
@@ -106,7 +106,7 @@ def main() -> None:
     parser.add_argument(
         "--count",
         type=int,
-        default=LABELS_PER_ROW * LABELS_PER_COLUMN,
+        default=COLS_PER_PAGE * ROWS_PER_PAGE,
         help="Number of labels to generate",
     )
     parser.add_argument(
