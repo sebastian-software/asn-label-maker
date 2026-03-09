@@ -121,12 +121,18 @@ def main():
 
     args = parser.parse_args()
 
-    generate_labels(args.output, args.start, args.count)
-    print(f"Generated {args.count} labels in {args.output}")
-
     if args.print:
-        print_pdf_headless(args.output)
-        os.remove(args.output)
+        # Use a temp file when printing to avoid race condition:
+        # lp is asynchronous — the spooler may not have read the file
+        # before os.remove() deletes it. A temp file lets the OS handle cleanup.
+        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
+            output_path = tmp.name
+        generate_labels(output_path, args.start, args.count)
+        print(f"Generated {args.count} labels, sending to printer...")
+        print_pdf_headless(output_path)
+    else:
+        generate_labels(args.output, args.start, args.count)
+        print(f"Generated {args.count} labels in {args.output}")
 
 
 if __name__ == "__main__":
