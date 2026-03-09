@@ -124,6 +124,13 @@ def main():
 
     args = parser.parse_args()
 
+    if args.start < 1:
+        parser.error("--start must be >= 1")
+    if args.count < 1:
+        parser.error("--count must be >= 1")
+    if args.start + args.count - 1 > 999_999:
+        parser.error("ASN numbers would exceed 6 digits (max ASN999999)")
+
     if args.print:
         with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
             output_path = tmp.name
