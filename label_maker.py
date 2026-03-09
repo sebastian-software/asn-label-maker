@@ -123,10 +123,6 @@ def main() -> None:
     if args.start + args.count - 1 > 999_999:
         parser.error("ASN numbers would exceed 6 digits (max ASN999999)")
 
-    output_dir = os.path.dirname(args.output)
-    if output_dir and not os.path.isdir(output_dir):
-        parser.error(f"Directory does not exist: {output_dir}")
-
     if args.print:
         with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
             output_path = tmp.name
@@ -140,6 +136,9 @@ def main() -> None:
             if os.path.exists(output_path):
                 os.remove(output_path)
     else:
+        output_dir = os.path.dirname(args.output)
+        if output_dir and not os.path.isdir(output_dir):
+            parser.error(f"Directory does not exist: {output_dir}")
         generate_labels(args.output, args.start, args.count, verbose=args.verbose)
         print(f"Generated {args.count} labels in {args.output}")
 
