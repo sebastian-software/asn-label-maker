@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
-from io import BytesIO
-
-import qrcode
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import mm
-from reportlab.lib.utils import ImageReader
-from reportlab.pdfbase.pdfmetrics import getAscentDescent
 import argparse
 import re
 import subprocess
 import tempfile
+from io import BytesIO
+
+import qrcode
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
+from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase.pdfmetrics import getAscentDescent
+from reportlab.pdfgen import canvas
 
 # AVERY L4731REV-25 specifications
 LABELS_PER_ROW = 7
