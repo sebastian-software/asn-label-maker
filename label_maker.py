@@ -68,7 +68,7 @@ def generate_labels(output_file, start_number, count, verbose=False):
         c.drawImage(ImageReader(buf), x, qr_y, qr_size, qr_size)
 
         # Draw text (right side)
-        text_x = x + qr_size + 0 * mm
+        text_x = x + qr_size
         text_y = y + LABEL_HEIGHT / 2 - 2  # Adjust for font baseline
         c.setFont("Helvetica-Bold", 8)
         c.drawString(text_x, text_y, asn_number)
