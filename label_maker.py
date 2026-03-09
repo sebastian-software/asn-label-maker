@@ -3,6 +3,7 @@
 import argparse
 import os
 import subprocess
+import sys
 import tempfile
 from io import BytesIO
 
@@ -124,6 +125,8 @@ def main() -> None:
         parser.error("ASN numbers would exceed 6 digits (max ASN999999)")
 
     if args.print:
+        if "--output" in sys.argv:
+            print("Note: --output is ignored when --print is set (using temporary file)")
         with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
             output_path = tmp.name
         try:
