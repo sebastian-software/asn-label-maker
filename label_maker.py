@@ -26,8 +26,8 @@ TOP_MARGIN = (
 ) / 2  # Center labels vertically
 
 
-def create_qr_code(text, size):
-    """Create a QR code with the given text and size."""
+def create_qr_code(text):
+    """Create a QR code with the given text."""
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -36,10 +36,7 @@ def create_qr_code(text, size):
     )
     qr.add_data(text)
     qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
-    # Resize the image to the specified size
-    # img = img.resize((int(size), int(size)))
-    return img
+    return qr.make_image(fill_color="black", back_color="white")
 
 
 def generate_labels(output_file, start_number, count):
@@ -59,7 +56,7 @@ def generate_labels(output_file, start_number, count):
 
         # Create QR code
         qr_size = LABEL_HEIGHT - 2 * mm  # 1mm margin on top and bottom
-        qr_img = create_qr_code(asn_number, qr_size)
+        qr_img = create_qr_code(asn_number)
 
         # Render QR code to in-memory buffer (no disk I/O)
         buf = BytesIO()
