@@ -6,6 +6,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 import os
 import subprocess
+import tempfile
 
 # AVERY L4731REV-25 specifications
 LABELS_PER_ROW = 7
@@ -57,24 +58,27 @@ def generate_labels(output_file, start_number, count):
         qr_size = LABEL_HEIGHT - 2 * mm  # 1mm margin on top and bottom
         qr_img = create_qr_code(asn_number, qr_size)
 
-        # Save QR code temporarily with unique filename
-        qr_path = f"temp_qr_{label_num}.png"
-        qr_img.save(qr_path)
+        # Save QR code temporarily in OS temp directory
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
+        qr_path = tmp_file.name
+        tmp_file.close()
+        try:
+            qr_img.save(qr_path)
 
-        # Draw QR code (left side)
-        qr_y = y + (LABEL_HEIGHT - qr_size) / 2  # Center QR vertically
-        c.drawImage(qr_path, x, qr_y, qr_size, qr_size)
+            # Draw QR code (left side)
+            qr_y = y + (LABEL_HEIGHT - qr_size) / 2  # Center QR vertically
+            c.drawImage(qr_path, x, qr_y, qr_size, qr_size)
 
-        # Draw text (right side)
-        text_x = x + qr_size + 0 * mm
-        text_y = y + LABEL_HEIGHT / 2 - 2  # Adjust for font baseline
-        c.setFont("Helvetica-Bold", 8)
-        c.drawString(text_x, text_y, asn_number)
+            # Draw text (right side)
+            text_x = x + qr_size + 0 * mm
+            text_y = y + LABEL_HEIGHT / 2 - 2  # Adjust for font baseline
+            c.setFont("Helvetica-Bold", 8)
+            c.drawString(text_x, text_y, asn_number)
 
-        print(asn_number + "(" + str(row) + " / " + str(col) + ")\n")
-
-        # Remove temporary QR code file
-        os.remove(qr_path)
+            print(asn_number + "(" + str(row) + " / " + str(col) + ")\n")
+        finally:
+            # Remove temporary QR code file
+            os.remove(qr_path)
 
         # Create new page if needed
         if (label_num + 1) % (LABELS_PER_ROW * LABELS_PER_COLUMN) == 0 and (
