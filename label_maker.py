@@ -2,7 +2,6 @@
 
 import argparse
 import os
-import re
 import subprocess
 import tempfile
 from io import BytesIO
@@ -95,16 +94,8 @@ def generate_labels(output_file: str, start_number: int, count: int, verbose: bo
     c.save()
 
 
-def print_pdf_headless(pdf_path: str, printer_name: str | None = None) -> None:
-    command = ["lp", "-o", "fit-to-page=false", "-o", "scaling=100"]
-
-    if printer_name:
-        if not re.match(r'^[\w.\-]+$', printer_name):
-            raise ValueError(f"Invalid printer name: {printer_name!r}")
-        command += ["-d", printer_name]
-
-    command.append(pdf_path)
-
+def print_pdf_headless(pdf_path: str) -> None:
+    command = ["lp", "-o", "fit-to-page=false", "-o", "scaling=100", pdf_path]
     subprocess.run(command, check=True)
 
 
