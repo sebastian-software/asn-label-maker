@@ -126,7 +126,7 @@ def main() -> None:
 
     if args.print:
         if "--output" in sys.argv:
-            print("Note: --output is ignored when --print is set (using temporary file)")
+            print("Note: --output is ignored when --print is set (using temporary file)", file=sys.stderr)
         with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
             output_path = tmp.name
         try:
