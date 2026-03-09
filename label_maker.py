@@ -8,6 +8,7 @@ import tempfile
 from io import BytesIO
 
 import qrcode
+from qrcode.image.pil import PilImage
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
@@ -29,7 +30,7 @@ TOP_MARGIN = (
 ) / 2  # Center labels vertically
 
 
-def create_qr_code(text):
+def create_qr_code(text: str) -> PilImage:
     """Create a QR code with the given text."""
     qr = qrcode.QRCode(
         version=1,
@@ -42,7 +43,7 @@ def create_qr_code(text):
     return qr.make_image(fill_color="black", back_color="white")
 
 
-def generate_labels(output_file, start_number, count, verbose=False):
+def generate_labels(output_file: str, start_number: int, count: int, verbose: bool = False) -> None:
     """Generate a PDF with labels containing QR codes and text."""
     c = canvas.Canvas(output_file, pagesize=A4)
 
@@ -94,7 +95,7 @@ def generate_labels(output_file, start_number, count, verbose=False):
     c.save()
 
 
-def print_pdf_headless(pdf_path, printer_name=None):
+def print_pdf_headless(pdf_path: str, printer_name: str | None = None) -> None:
     command = ["lp", "-o", "fit-to-page=false", "-o", "scaling=100"]
 
     if printer_name:
@@ -107,7 +108,7 @@ def print_pdf_headless(pdf_path, printer_name=None):
     subprocess.run(command, check=True)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Generate PDF labels with QR codes")
     parser.add_argument("--start", type=int, default=1, help="Starting ASN number")
     parser.add_argument(
