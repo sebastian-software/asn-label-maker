@@ -8,6 +8,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase.pdfmetrics import getAscentDescent
+import argparse
 import re
 import subprocess
 import tempfile
@@ -103,8 +104,6 @@ def print_pdf_headless(pdf_path, printer_name=None):
 
 
 def main():
-    import argparse
-
     parser = argparse.ArgumentParser(description="Generate PDF labels with QR codes")
     parser.add_argument("--start", type=int, default=1, help="Starting ASN number")
     parser.add_argument(
