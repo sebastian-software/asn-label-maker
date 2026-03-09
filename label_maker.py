@@ -142,7 +142,8 @@ def main() -> None:
             # so it is safe to delete immediately after.
             print_pdf_headless(output_path)
         finally:
-            os.remove(output_path)
+            if os.path.exists(output_path):
+                os.remove(output_path)
     else:
         generate_labels(args.output, args.start, args.count, verbose=args.verbose)
         print(f"Generated {args.count} labels in {args.output}")
