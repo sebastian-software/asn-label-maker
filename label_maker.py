@@ -45,6 +45,12 @@ def generate_labels(output_file, start_number, count, verbose=False):
     """Generate a PDF with labels containing QR codes and text."""
     c = canvas.Canvas(output_file, pagesize=A4)
 
+    font_name = "Helvetica-Bold"
+    font_size = 8
+    ascent, descent = getAscentDescent(font_name, font_size)
+    qr_size = LABEL_HEIGHT - 2 * mm  # 1mm margin on top and bottom
+    c.setFont(font_name, font_size)
+
     for label_num in range(count):
         # Calculate position for current label
         row = (label_num // LABELS_PER_ROW) % LABELS_PER_COLUMN
@@ -57,7 +63,6 @@ def generate_labels(output_file, start_number, count, verbose=False):
         asn_number = f"ASN{(start_number + label_num):06d}"
 
         # Create QR code
-        qr_size = LABEL_HEIGHT - 2 * mm  # 1mm margin on top and bottom
         qr_img = create_qr_code(asn_number)
 
         # Render QR code to in-memory buffer (no disk I/O)
@@ -70,12 +75,8 @@ def generate_labels(output_file, start_number, count, verbose=False):
         c.drawImage(ImageReader(buf), x, qr_y, qr_size, qr_size)
 
         # Draw text (right side, vertically centered)
-        font_name = "Helvetica-Bold"
-        font_size = 8
         text_x = x + qr_size
-        ascent, descent = getAscentDescent(font_name, font_size)
         text_y = y + (LABEL_HEIGHT - ascent + descent) / 2
-        c.setFont(font_name, font_size)
         c.drawString(text_x, text_y, asn_number)
 
         if verbose:
@@ -86,6 +87,7 @@ def generate_labels(output_file, start_number, count, verbose=False):
             label_num + 1
         ) < count:
             c.showPage()
+            c.setFont(font_name, font_size)
 
     c.save()
 
